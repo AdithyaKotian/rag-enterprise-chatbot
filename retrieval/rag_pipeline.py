@@ -1,27 +1,17 @@
 from groq import Groq
-import os
-from dotenv import load_dotenv
+import streamlit as st
 
-load_dotenv()
-
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 def generate_answer(query, docs, role=None, chat_history=None):
     if not docs:
         return "Not found in provided documents."
 
-    # ----------------------------
-    # LIMIT CONTEXT
-    # ----------------------------
     context = "\n\n---\n\n".join([doc.page_content for doc in docs[:5]])
 
-    # ----------------------------
-    # CHAT HISTORY (NEW)
-    # ----------------------------
     history_text = ""
     if chat_history:
-        for q, a in chat_history[-3:]:  # last 3 turns
+        for q, a in chat_history[-3:]:
             history_text += f"Q: {q}\nA: {a}\n"
 
     prompt = f"""
