@@ -1,19 +1,31 @@
 from groq import Groq
 import streamlit as st
 
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+def get_client():
+    return Groq(api_key=st.secrets["GROQ_API_KEY"])
+
 
 def generate_answer(query, docs, role=None, chat_history=None):
     if not docs:
         return "Not found in provided documents."
 
+    client = get_client()  
+    # ----------------------------
+    # CONTEXT
+    # ----------------------------
     context = "\n\n---\n\n".join([doc.page_content for doc in docs[:5]])
 
+    # ----------------------------
+    # CHAT HISTORY
+    # ----------------------------
     history_text = ""
     if chat_history:
         for q, a in chat_history[-3:]:
             history_text += f"Q: {q}\nA: {a}\n"
 
+    # ----------------------------
+    # PROMPT
+    # ----------------------------
     prompt = f"""
 You are an enterprise assistant.
 
@@ -37,11 +49,18 @@ Question:
 Answer:
 """
 
-    response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.2,
-        max_tokens=200
-    )
+    # ----------------------------
+    # LLM CALL
+    # ----------------------------
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=200
+        )
 
-    return response.choices[0].message.content.strip()
+        return response.choices[0].message.content.strip()
+
+    except Exception as e:
+        return f"Error: {str(e)}"
