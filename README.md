@@ -1,5 +1,7 @@
 #  Enterprise RAG Chatbot (Role-Based Access)
 
+🚀 Live Demo: https://rag-enterprise-chatbot-3zra5m55rtmgjv8vmxumym.streamlit.app/
+
 A production-style **Retrieval-Augmented Generation (RAG)** chatbot that answers enterprise queries using internal documents with **role-based access control**.
 
 Built using **LangChain, ChromaDB, HuggingFace Embeddings, Groq LLM (LLaMA 3), and Streamlit**.
